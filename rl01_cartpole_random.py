@@ -15,7 +15,7 @@ steps_total = []
 for i_episode in range(NUM_EPISODES):
 
     state = env.reset()
-    step = 0
+    step = 0  # pylint: disable=invalid-name
 
     # for step in range(100):
     while True:
