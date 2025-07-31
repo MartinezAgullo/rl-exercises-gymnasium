@@ -79,21 +79,14 @@ for i_episode in range(NUM_EPISODES):
 
 
 # Print statistics
+print(f"Percent of episodes finished successfully: {sum(rewards_total) / NUM_EPISODES}")
 print(
-    "Percent of episodes finished successfully: {0}".format(
-        sum(rewards_total) / NUM_EPISODES
-    )
-)
-print(
-    "Percent of episodes finished successfully (last 100 episodes): {0}".format(
-        sum(rewards_total[-100:]) / 100
-    )
+    f"Percent of episodes finished successfully (last 100 episodes): {sum(rewards_total[-100:]) / 100}"
 )
 
-print("Average number of steps: %.2f" % (sum(steps_total) / NUM_EPISODES))
+print(f"Average number of steps: {sum(steps_total) / NUM_EPISODES:.2f}")
 print(
-    "Average number of steps (last 100 episodes): %.2f"
-    % (sum(steps_total[-100:]) / 100)
+    f"Average number of steps (last 100 episodes): {sum(steps_total[-100:]) / 100:.2f}"
 )
 
 

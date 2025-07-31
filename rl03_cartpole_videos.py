@@ -38,11 +38,13 @@ for i_episode in range(NUM_EPISODES):
             steps_total.append(step)
             if abs(cart_position) > 2.4:
                 print(
-                    f"Episode {i_episode+1} terminated after {step} steps: Cart position exceeded limit ({cart_position:.2f})."
+                    f"Episode {i_episode+1} terminated after {step} steps: "
+                    f"Cart position exceeded limit ({cart_position:.2f})."
                 )
             elif abs(pole_angle) > 0.2095:
                 print(
-                    f"Episode {i_episode+1} terminated after {step} steps: Pole angle exceeded limit ({pole_angle:.2f} rad)."
+                    f"Episode {i_episode+1} terminated after {step} steps: "
+                    f"Pole angle exceeded limit ({pole_angle:.2f} rad)."
                 )
             break
         if truncated:
@@ -62,4 +64,4 @@ plt.savefig(steps_plot_path, dpi=300)
 plt.close()
 
 
-print("Plot saved to ./docs/rl01/rl01_avg_number_of_steps.png")
+print(f"Plot saved to {steps_plot_path}")
