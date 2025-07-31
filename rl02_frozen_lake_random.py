@@ -20,7 +20,7 @@ for i_episode in range(NUM_EPISODES):
 
     state = env.reset()
 
-    step = 0  # pylint: disable=invalid-na
+    step = 0  # pylint: disable=invalid-name
 
     while True:
 
