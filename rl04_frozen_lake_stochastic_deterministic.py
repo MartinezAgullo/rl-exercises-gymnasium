@@ -1,5 +1,10 @@
 """
 Random policy for FrozenLake using Gymnasium.
+
+With register, is possible to switch easily between deterministic and
+stochastic environments.
+Stochastic version (default) -> is_slippery=True
+Deterministic version -> is_slippery=False
 """
 
 import os
@@ -7,11 +12,27 @@ import os
 import gymnasium as gym
 import matplotlib.pyplot as plt
 import torch
+from gymnasium.envs.registration import register
 
-# env = gym.make('FrozenLake-v1', render_mode="human", desc=None, map_name="4x4", is_slippery=True)
-env = gym.make("FrozenLake-v1", desc=None, map_name="4x4", is_slippery=True)
+# Register a deterministic version
+register(
+    id="FrozenLakeDeterministic-v1",
+    entry_point="gymnasium.envs.toy_text.frozen_lake:FrozenLakeEnv",
+    kwargs={"map_name": "4x4", "is_slippery": False},
+)
 
-OUTPUT_DIR = "./docs/rl02"
+# Register a stochastic version
+register(
+    id="FrozenLakeStochastic-v1",
+    entry_point="gymnasium.envs.toy_text.frozen_lake:FrozenLakeEnv",
+    kwargs={"map_name": "4x4", "is_slippery": True},
+)
+
+
+env = gym.make("FrozenLakeDeterministic-v1")  # or "FrozenLakeStochastic-v1"
+OUTPUT_DIR = "./docs/rl04"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
 NUM_EPISODES = 1000
 steps_total = []
 rewards_total = []
@@ -26,30 +47,15 @@ for i_episode in range(NUM_EPISODES):
 
         step += 1
 
-        # Action space:
-        #      0: Move left
-        #      1: Move adown
-        #      2: Move right
-        #      3: Move up
         action = env.action_space.sample()
 
         new_state, reward, terminated, truncated, info = env.step(action)
 
-        # Tile letters:
-        #       “S” for Start tile
-        #       “G” for Goal tile
-        #       “F” for frozen tile
-        #       “H” for a tile with a hole
-
-        # print(new_state)
-        # print(info)
-
-        # time.sleep(0.4)
-
-        # env.render()
+        env.render()
+        print(new_state)
+        print(info)
 
         if terminated:
-            # Get the character of the new position
             row = new_state // env.unwrapped.ncol
             col = new_state % env.unwrapped.ncol
             cell = env.unwrapped.desc[row][col].decode("utf-8")
@@ -91,9 +97,6 @@ print(
 )
 
 
-# Ensure output folder exists
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
 # ----- Figure 1: Rewards -----
 plt.figure(figsize=(12, 5))
 plt.title("Rewards per Episode")
@@ -102,7 +105,7 @@ plt.bar(
 )
 plt.xlabel("Episode")
 plt.ylabel("Reward")
-reward_plot_path = os.path.join(OUTPUT_DIR, "rl02_rewards_per_episode.png")
+reward_plot_path = os.path.join(OUTPUT_DIR, "rl04_rewards_per_episode.png")
 plt.savefig(reward_plot_path, dpi=300)
 # plt.show()
 plt.close()
@@ -115,7 +118,7 @@ plt.title("Steps / Episode length")
 plt.bar(torch.arange(len(steps_total)), steps_total, alpha=0.6, color="red", width=5)
 plt.xlabel("Episode")
 plt.ylabel("Steps")
-steps_plot_path = os.path.join(OUTPUT_DIR, "rl02_steps_per_episode.png")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl04_steps_per_episode.png")
 plt.savefig(steps_plot_path, dpi=300)
 # plt.show()
 plt.close()
