@@ -1,11 +1,18 @@
+"""
+Random policy for CartPole using Gymnasium.
+
+This script runs a random policy on the CartPole-v1 environment and plots the
+number of steps per episode.
+"""
+
 import gymnasium as gym
 import matplotlib.pyplot as plt
 
 env = gym.make("CartPole-v1", render_mode="human")
-num_episodes = 1000
+NUM_EPISODES = 1000
 steps_total = []
 
-for i_episode in range(num_episodes):
+for i_episode in range(NUM_EPISODES):
 
     state = env.reset()
     step = 0
@@ -37,6 +44,6 @@ for i_episode in range(num_episodes):
             break
 
 
-print(f"Average number of steps: {sum(steps_total)/num_episodes:.2f}")
+print(f"Average number of steps: {sum(steps_total)/NUM_EPISODES:.2f}")
 plt.plot(steps_total)
 plt.show()
