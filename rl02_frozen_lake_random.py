@@ -11,7 +11,7 @@ import torch
 # env = gym.make('FrozenLake-v1', render_mode="human", desc=None, map_name="4x4", is_slippery=True)
 env = gym.make("FrozenLake-v1", desc=None, map_name="4x4", is_slippery=True)
 
-
+OUTPUT_DIR = "./docs/rl02"
 NUM_EPISODES = 1000
 steps_total = []
 rewards_total = []
@@ -20,7 +20,7 @@ for i_episode in range(NUM_EPISODES):
 
     state = env.reset()
 
-    step = 0
+    step = 0  # pylint: disable=invalid-na
 
     while True:
 
@@ -56,11 +56,13 @@ for i_episode in range(NUM_EPISODES):
 
             if cell == "H":
                 print(
-                    f"Episode {i_episode + 1} terminated after {step} steps: Fell into a hole at ({row}, {col})."
+                    f"Episode {i_episode + 1} terminated after {step} steps: "
+                    f"Fell into a hole at ({row}, {col})."
                 )
             elif cell == "G":
                 print(
-                    f"Episode {i_episode + 1} terminated after {step} steps: Reached the goal at ({row}, {col})."
+                    f"Episode {i_episode + 1} terminated after {step} steps: "
+                    f"Reached the goal at ({row}, {col})."
                 )
 
             steps_total.append(step)
@@ -96,8 +98,7 @@ print(
 
 
 # Ensure output folder exists
-output_dir = "./docs/rl02"
-os.makedirs(output_dir, exist_ok=True)
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # ----- Figure 1: Rewards -----
 plt.figure(figsize=(12, 5))
@@ -107,7 +108,7 @@ plt.bar(
 )
 plt.xlabel("Episode")
 plt.ylabel("Reward")
-reward_plot_path = os.path.join(output_dir, "rl02_rewards_per_episode.png")
+reward_plot_path = os.path.join(OUTPUT_DIR, "rl02_rewards_per_episode.png")
 plt.savefig(reward_plot_path, dpi=300)
 # plt.show()
 plt.close()
@@ -120,7 +121,7 @@ plt.title("Steps / Episode length")
 plt.bar(torch.arange(len(steps_total)), steps_total, alpha=0.6, color="red", width=5)
 plt.xlabel("Episode")
 plt.ylabel("Steps")
-steps_plot_path = os.path.join(output_dir, "rl02_steps_per_episode.png")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl02_steps_per_episode.png")
 plt.savefig(steps_plot_path, dpi=300)
 # plt.show()
 plt.close()

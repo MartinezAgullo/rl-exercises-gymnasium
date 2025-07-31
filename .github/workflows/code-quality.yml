@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff black pylint gymnasium[classic-control] matplotlib
+          pip install ruff black pylint gymnasium[classic-control] matplotlib torch
 
       - name: Run Ruff (Lint + Fix)
         run: ruff check . --fix
@@ -30,4 +30,4 @@ jobs:
         run: black --check .
 
       - name: Run Pylint
-        run: pylint $(git ls-files '*.py')
+        run: pylint --disable=R0801 $(git ls-files '*.py')
