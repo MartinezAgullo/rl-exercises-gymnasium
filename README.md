@@ -6,5 +6,5 @@ A collection of Reinforcement Learning exercises based on the Udemy course, upda
 
 
 ## Exercises
-### rl01-CartPoleRandom.py
+### rl01_cartpole_random.py
 Cart pole moving randomly to test the gymnasium API
