@@ -5,6 +5,8 @@ This script runs a random policy on the CartPole-v1 environment and plots the
 number of steps per episode.
 """
 
+import os
+
 import gymnasium as gym
 import matplotlib.pyplot as plt
 
@@ -22,7 +24,7 @@ for i_episode in range(NUM_EPISODES):
 
         step += 1
 
-        # The action space is:
+        # Action space:
         #      0: Push cart to the left
         #      1: Push cart to the right
         action = env.action_space.sample()
@@ -44,6 +46,14 @@ for i_episode in range(NUM_EPISODES):
             break
 
 
+os.makedirs("./docs/rl01", exist_ok=True)
+
 print(f"Average number of steps: {sum(steps_total)/NUM_EPISODES:.2f}")
 plt.plot(steps_total)
+plt.title("Average Number of Steps per Episode")
+plt.xlabel("Episode")
+plt.savefig("./docs/rl01/rl01_avg_number_of_steps.png", dpi=300)
+plt.close()
 plt.show()
+
+print("Plot saved to ./docs/rl01/rl01_avg_number_of_steps.png")
