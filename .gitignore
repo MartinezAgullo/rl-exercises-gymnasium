@@ -1,0 +1,49 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+env/
+venv/
+.python-version
+.vscode/
+
+# Poetry
+poetry.lock
+.poetry/
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+
+# Environment variables
+.env
+*.env
+
+# Test reports
+htmlcov/
+.coverage
+*.cover
+*.pytest_cache/
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
+
+# Ignore all __init__.py files
+**/__init__.py
+
+
+# precommit files
+.mypy_cache/
+.ruff_cache/

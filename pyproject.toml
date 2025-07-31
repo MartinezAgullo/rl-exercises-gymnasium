@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "rl-exercises-gymnasium"
+version = "0.1.0"
+description = "Reinforcement Learning exercises from the Udemi course using Gymnasium."
+authors = ["MartinezAgullo <pablo.martinez.agullo@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.11.7"
+gymnasium = {extras = ["classic-control"], version = "^1.2.0"}
+numpy = "^2.3.2"
+torch = "~2.3.0"
+tqdm = "^4.67.1"
+matplotlib = "^3.10.3"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.2.0"
+ruff = "^0.12.5"
+black = "^25.1.0"
+isort = "^6.0.1"
+mypy = "^1.17.0"
+bandit = "^1.8.6"
+commitizen = "^4.8.3"
+pytest = "^8.4.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
