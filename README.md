@@ -6,13 +6,30 @@ Includes practical implementations of classic control environments and examples 
 ## Exercises
 
 ### rl01_cartpole_random.py
-[CartPole](https://gymnasium.farama.org/environments/classic_control/cart_pole/) environment with random actions to test the Gymnasium API.
+[Cart Pole](https://gymnasium.farama.org/environments/classic_control/cart_pole/) environment with random actions to test the Gymnasium API.
 
 ### rl02_frozen_lake_random.py
-[FrozenLake](https://gymnasium.farama.org/environments/toy_text/frozen_lake/) environment with random actions.
+[Frozen Lake](https://gymnasium.farama.org/environments/toy_text/frozen_lake/) environment with random actions.
 
 ### rl03_cartpole_videos.py
-The same [CartPole](https://gymnasium.farama.org/environments/classic_control/cart_pole/) as in [rl01_cartpole_random.py](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/rl01_cartpole_random.py), but with video recording.
+The same [Cart Pole](https://gymnasium.farama.org/environments/classic_control/cart_pole/) as in [rl01_cartpole_random.py](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/rl01_cartpole_random.py), but with video recording.
 
 ### rl04_frozen_lake_stochastic_deterministic.py
 Includes configuration to switch between stochastic and deterministic versions of the environment.
+
+### rl05_frozen_lake_deterministic_bellman.py
+Implementation of the Bellman equation in the Frozen Lake exercise
+
+$$
+Q(s, a) = r + \gamma \cdot \max_{a'} Q(s', a')
+$$
+
+- ***Q(s,a)***: The **action-value function** or Q-value, representing the expected cumulative reward of taking action *a* in state *s*, and then following the optimal policy.
+
+- ***$\gamma$***: The **discount factor** ( 0≤γ≤10 \leq \gamma \leq 1 ), which determines the importance of future rewards.
+
+    -   γ=0\gamma = 0: Focus only on immediate rewards.
+
+    -   γ≈1\gamma \approx 1: Future rewards are considered almost as important as immediate rewards.
+
+- ***r***: The **immediate reward** received after performing action *a* in state *s*.
