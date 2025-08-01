@@ -10,8 +10,6 @@ import matplotlib.pyplot as plt
 import torch
 from gymnasium.envs.registration import register
 
-from utils.print_q_table import print_q_table
-
 # Deterministic
 register(
     id="FrozenLakeDeterministic-v1",
@@ -41,7 +39,6 @@ rewards_total = []
 number_of_states = env.observation_space.n
 number_of_actions = env.action_space.n
 Q = torch.zeros([number_of_states, number_of_actions])  # 16x4 tensor
-print(Q)
 
 # Discount factor
 GAMMA = 1
@@ -56,21 +53,21 @@ for i_episode in range(NUM_EPISODES):
 
         step += 1
 
+        # Add very small random values to row Q[state] so that the
+        # argmax has some variability in the case all Q values are the same
+        random_values = Q[state] + torch.rand(1, number_of_actions) / 1000
+
         # action = env.action_space.sample()
-        action = torch.argmax(Q[state]).item()  # best action
+        action = torch.argmax(random_values).item()  # best action
 
         new_state, reward, terminated, truncated, info = env.step(action)
-
-        max_q_value, best_action = torch.max(Q[new_state], dim=0)
 
         # Bellman equation
         Q[state, action] = reward + GAMMA * torch.max(Q[new_state])
         # max(Q[new_state]) provides the largest Q among all Q[new_state, a].
 
         # env.render()
-        print_q_table(Q)
-        print(f"new state: {new_state}")
-        print(f"reward: {reward}")
+        # print_q_table(Q)
 
         state = new_state  # move to next state
 

@@ -33,3 +33,18 @@ $$
     -   γ≈1\gamma \approx 1: Future rewards are considered almost as important as immediate rewards.
 
 - ***r***: The **immediate reward** received after performing action *a* in state *s*.
+
+<div style="display: flex; justify-content: center; align-items: flex-start; gap: 20px;">
+    <figure style="margin: 0;">
+        <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl05/rl05_steps_per_episode_before_learning.png" alt="Steps per episode before learning" style="width: 100%; max-width: 400px; display: block;">
+        <figcaption style="text-align: center; font-size: 0.9em; color: #555;">
+            Figure 1: Steps per episode before learning.
+        </figcaption>
+    </figure>
+    <figure style="margin: 0;">
+        <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl05/rl05_steps_per_episode.png" alt="Steps per episode after learning" style="width: 100%; max-width: 400px; display: block;">
+        <figcaption style="text-align: center; font-size: 0.9em; color: #555;">
+            Figure 2: Steps per episode after learning.
+        </figcaption>
+    </figure>
+</div>

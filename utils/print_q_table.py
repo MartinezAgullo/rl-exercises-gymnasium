@@ -5,7 +5,7 @@ import torch
 
 def print_q_table(q_table: torch.Tensor) -> None:
     """
-    Pretty-print a Q-table.
+    Pretty-print a Q-table for Frozen Lake
 
     Args:
         q_table (torch.Tensor or np.ndarray): Q-table of shape [num_states, num_actions].
