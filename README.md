@@ -147,9 +147,10 @@ The ɛ greedy is varying through the episodes so that the exploration is favoure
     </figure>
 
 ### rl09_fl_value_iteration
-Instead of Q-values, the V-values are used.
+As an alternative, instead of Q-values, the V-values can be used.
 
 The V-value at a state *s* for a given policy $\pi$ is:
+
 $$
 V(s) := \sum_{s'} P_{\pi(s)}(s, s') (R_{\pi(s)}(s, s') + \gamma V(s'))
 $$
@@ -161,7 +162,7 @@ It calculates the expected return from state *s* by summing the rewards and disc
 The optimal policy $\pi(s)$ is given by:
 
 $$
-\pi(s) := \arg \max_{a} \left\{ \sum_{s'} P_{a}(s, s') [R_{a}(s, s') + \gamma V(s')] \right\}
+\pi(s) := \arg \max_{a} [ \sum_{s'} P_{a}(s, s') [R_{a}(s, s') + \gamma V(s')] ]
 $$
 
 It states that the best action to take in state *s* is the one that maximizes the expected value of the resulting state, essentially choosing the action that leads to the highest potential reward.
@@ -169,5 +170,39 @@ It states that the best action to take in state *s* is the one that maximizes th
 The value iteration algorithm is an iterative method to find the optimal value function by repeatedly updating the value of each  *V(s)* to equal the maximum expected value achievable from that state. This process continues until the values converge to the optimal values.
 
 $$
-V_{i+1}(s) := \max_{a} \left\{ \sum_{s'} P_{a}(s, s') (R_{a}(s, s') + \gamma V_i(s')) \right\}
+V_{i+1}(s) := \max_{a} [ \sum_{s'} P_{a}(s, s') (R_{a}(s, s') + \gamma V_i(s')) ]
 $$
+
+Since a (optimal) policy is found with this method, there is no learning after taking steps.
+    <figure style="margin: 0;">
+        <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl09/rl09_steps_per_episode.png" alt="Steps per episode before learning" style="width: 100%; max-width: 400px; display: block;">
+        <figcaption style="text-align: center; font-size: 0.9em; color: #555;">
+            Figure 6: Steps per episode after finding the optimal policy with value interation.
+        </figcaption>
+    </figure>
+
+### rl10_taxi.py
+Apply the adaptative ɛ greedy strategy in the [Taxi](https://gymnasium.farama.org/environments/toy_text/taxi/) environment. In this scenario, negative rewards are possible:
+    <figure style="margin: 0;">
+        <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl10/rl10_rewards_per_episode.png" alt="Steps per episode before learning" style="width: 100%; max-width: 400px; display: block;">
+        <figcaption style="text-align: center; font-size: 0.9em; color: #555;">
+            Figure 7: Reward per episode.
+        </figcaption>
+    </figure>
+
+
+<!-- ```console
+Traning completed after 300 episodes.
+Hyperparameters:
+         Discount factor: 0.9
+         Learning rate: 1 (becuase deterministic)
+         Epsilon for exploration:
+                 Initial 0.9
+                 Final 0.001
+                 Decay multipliyer 0.999
+
+Percent of episodes finished successfully: 87.66%
+Percent of episodes finished successfully (last 100 episodes): 100.0%
+Average number of steps: 63.25
+Average number of steps (last 100 episodes): 19.71
+``` -->
