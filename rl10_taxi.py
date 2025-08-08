@@ -8,10 +8,16 @@ import os
 import gymnasium as gym
 import matplotlib.pyplot as plt
 import torch
+from gymnasium.wrappers import RecordVideo
 
-env = gym.make("Taxi-v3", is_rainy=False, fickle_passenger=False)
+env = gym.make(
+    "Taxi-v3", is_rainy=False, fickle_passenger=False, render_mode="rgb_array"
+)
 OUTPUT_DIR = "./docs/rl10"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+env = RecordVideo(env, video_folder=OUTPUT_DIR, episode_trigger=lambda x: x % 100 == 0)
+
+
 plt.style.use("ggplot")
 
 
