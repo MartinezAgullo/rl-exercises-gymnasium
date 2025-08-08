@@ -57,7 +57,7 @@ Percent of episodes finished successfully (last 200 episodes): 100.0%
 ```
 
 ### rl06_frozen_lake_stochastic_bellman.py
-Applying the simple, deterministic Bellman equation you've used for the Frozen Lake problem, which is *Q(s,a)=r+γ⋅max_{a'} Q(s', a')*  doesn't work in a stochastic environment because it incorrectly assumes that an action will always lead to a single, predictable next state. Instead, there's a probability distribution over possible next states.
+Applying the simple, deterministic Bellman equation you've used for the Frozen Lake problem, which is $Q(s,a)=r+γ⋅max_{a'} Q(s', a')$  doesn't work in a stochastic environment because it incorrectly assumes that an action will always lead to a single, predictable next state. Instead, there's a probability distribution over possible next states.
 
 ```console
 Percent of episodes finished successfully (last 200 episodes): 2.5%
@@ -75,32 +75,32 @@ $$
 and the new Q-value for the *(s, a)* pair at a time *t* is:
 
 $$
-Q_{t}(s, a) = Q_{t-1}(s, a) + α * TD
+Q_{t}(s, a) = Q_{t-1}(s, a) + α \cdot TD
 $$
 
 and hence
 
 $$
-Q(s, a) = Q(s, a) + α * [r + \gamma \cdot \max_{a'} Q(s', a') - Q(s, a)]
+Q(s, a) = Q(s, a) + α \cdot [r + \gamma \cdot \max_{a'} Q(s', a') - Q(s, a)]
 $$
 
 rewritten:
 
 $$
-Q(s, a) = (1 - α)Q(s, a) + α *[r + \gamma \cdot \max_{a'} Q(s', a')]
+Q(s, a) = (1 - α)Q(s, a) + α \cdot[r + \gamma \cdot \max_{a'} Q(s', a')]
 $$
 
 where:
-- ***$Q_{t-1}(s, a)$***: Old Q-value for the current *s, a* pair.
+- *** $Q_{t-1}(s, a)$ ***: Old Q-value for the current *s, a* pair.
 
 - ***α***: Learning rate (0<α≤1). Controls balance between learning from new experiences and using experience.
     - α = 0: The agent never learns and its Q-values are never updated.
             Therefore:
-            *$Q(s, a) = Q(s, a)$*
+            $Q(s, a) = Q(s, a)$
 
     - α = 1: The agent only takes into account the most recent experience and the old Q-value is completely replaced by the new one.
             Therefore:
-            *$Q(s, a) = r + \gamma \cdot \max_{a'} Q(s', a')$* (Bellman Equation)
+            $Q(s, a) = r + \gamma \cdot \max_{a'} Q(s', a')$ (Bellman Equation)
 
 ```console
 Traning completed after 10000 episodes.
@@ -109,4 +109,24 @@ Hyperparameters:
          Learning rate: 0.5
 Percent of episodes finished successfully: 45.61%
 Percent of episodes finished successfully (last 100 episodes): 87.0%
+```
+### rl08_fl_e_greedy_exploration.py
+Include an ɛ-greedy exploration strategy.
+    <figure style="margin: 0;">
+        <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl08/rl08_steps_per_episode.png" alt="Steps per episode before learning" style="width: 100%; max-width: 400px; display: block;">
+        <figcaption style="text-align: center; font-size: 0.9em; color: #555;">
+            Figure 3: Steps per episode with exploration strategy. Note how, while optimal is known, from time a different path is explored.
+        </figcaption>
+    </figure>
+
+```console
+Traning completed after 1000 episodes.
+Hyperparameters:
+         Discount factor: 0.9
+         Learning rate: 1 (becuase deterministic)
+         Epsilon for exploration: 0.1
+Percent of episodes finished successfully: 85.5%
+Percent of episodes finished successfully (last 100 episodes): 91.0%
+Average number of steps: 6.59
+Average number of steps (last 100 episodes): 6.47
 ```

@@ -1,9 +1,7 @@
 """
-FrozenLake.
+Deterministic FrozenLake.
 
-Implementation of the Bellman equation for
-the stochastic scenario - "is_slippery": True
-
+Implementation of epsilon-greedy exploration strategy.
 """
 
 import os
@@ -20,17 +18,8 @@ register(
     kwargs={"map_name": "4x4", "is_slippery": False},
 )
 
-# Stochastic
-register(
-    id="FrozenLakeStochastic-v1",
-    entry_point="gymnasium.envs.toy_text.frozen_lake:FrozenLakeEnv",
-    kwargs={"map_name": "4x4", "is_slippery": True},
-)
-
-
-# Stochastic frozen lake
-env = gym.make("FrozenLakeStochastic-v1")
-OUTPUT_DIR = "./docs/rl06"
+env = gym.make("FrozenLakeDeterministic-v1")
+OUTPUT_DIR = "./docs/rl08"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 plt.style.use("ggplot")
 
@@ -42,10 +31,14 @@ rewards_total = []
 # Initialize Q-table
 number_of_states = env.observation_space.n
 number_of_actions = env.action_space.n
-Q = torch.zeros([number_of_states, number_of_actions])  # 16x4 tensor
+Q = torch.zeros([number_of_states, number_of_actions])
 
-# Discount factor
-GAMMA = 1
+# Hyperparameters
+# The LR is set to 1 so that the Q-value is that of the Bellman eq
+# for deterministic environments.
+GAMMA = 0.9
+LEARNING_RATE = 1
+EPSILON = 0.1
 
 
 for i_episode in range(NUM_EPISODES):
@@ -57,40 +50,27 @@ for i_episode in range(NUM_EPISODES):
 
         step += 1
 
-        # Add very small random values to row Q[state] so that the
-        # argmax has some variability in the case all Q values are the same
         random_values = Q[state] + torch.rand(1, number_of_actions) / 1000
 
-        # action = env.action_space.sample() # random action
-        action = torch.argmax(random_values).item()  # best action
+        # generate random number to compare with epsilon
+        random_for_egreedy = random_for_egreedy = torch.rand(1).item()
+        if random_for_egreedy < EPSILON:
+            # Explore new actions - Random movement
+            action = env.action_space.sample()
+        else:
+            # Chose best action (to our knoledge)
+            action = torch.argmax(random_values).item()
 
         new_state, reward, terminated, truncated, info = env.step(action)
 
-        # Bellman equation
-        Q[state, action] = reward + GAMMA * torch.max(Q[new_state])
-        # max(Q[new_state]) provides the largest Q among all Q[new_state, a].
+        # Algorithm for stochastic environment
+        Q[state, action] = (1 - LEARNING_RATE) * Q[state, action] + LEARNING_RATE * (
+            reward + GAMMA * torch.max(Q[new_state])
+        )
 
-        # env.render()
-        # print_q_table(Q)
-
-        state = new_state  # move to next state
+        state = new_state
 
         if terminated:
-            row = new_state // env.unwrapped.ncol
-            col = new_state % env.unwrapped.ncol
-            cell = env.unwrapped.desc[row][col].decode("utf-8")
-
-            if cell == "H":
-                print(
-                    f"Episode {i_episode + 1} terminated after {step} steps: "
-                    f"Fell into a hole at ({row}, {col})."
-                )
-            elif cell == "G":
-                print(
-                    f"Episode {i_episode + 1} terminated after {step} steps: "
-                    f"Reached the goal at ({row}, {col})."
-                )
-
             steps_total.append(step)
             rewards_total.append(reward)
             break
@@ -98,14 +78,19 @@ for i_episode in range(NUM_EPISODES):
         if truncated:
             steps_total.append(step)
             rewards_total.append(reward)
-            print(
-                f"Episode {i_episode + 1} truncated after {step} steps: Time limit reached."
-            )
             break
 
 
 # Print statistics
-N_EPISODES_FOR_STATS = 200
+print(f"\nTraning completed after {NUM_EPISODES} episodes.")
+print(
+    "Hyperparameters: \n"
+    f"\t Discount factor: {GAMMA}\n"
+    f"\t Learning rate: {LEARNING_RATE} (becuase deterministic)\n"
+    f"\t Epsilon for exploration: {EPSILON}"
+)
+
+N_EPISODES_FOR_STATS = 100
 print(
     f"Percent of episodes finished successfully: {100*sum(rewards_total) / NUM_EPISODES}%"
 )
@@ -127,7 +112,7 @@ plt.bar(
 )
 plt.xlabel("Episode")
 plt.ylabel("Reward")
-reward_plot_path = os.path.join(OUTPUT_DIR, "rl06_rewards_per_episode.png")
+reward_plot_path = os.path.join(OUTPUT_DIR, "rl08_rewards_per_episode.png")
 plt.savefig(reward_plot_path, dpi=300)
 plt.close()
 print(f"Saved: {reward_plot_path}")
@@ -138,6 +123,6 @@ plt.title("Steps / Episode length")
 plt.bar(torch.arange(len(steps_total)), steps_total, alpha=0.6, color="red", width=5)
 plt.xlabel("Episode")
 plt.ylabel("Steps")
-steps_plot_path = os.path.join(OUTPUT_DIR, "rl06_steps_per_episode.png")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl08_steps_per_episode.png")
 plt.savefig(steps_plot_path, dpi=300)
 plt.close()
