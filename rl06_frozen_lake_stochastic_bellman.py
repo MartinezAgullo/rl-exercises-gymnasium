@@ -1,8 +1,9 @@
 """
-FrozenLake
+FrozenLake.
 
 Implementation of the Bellman equation for
-the deterministic scenario - "is_slippery": Flase
+the stochastic scenario - "is_slippery": True
+
 """
 
 import os
@@ -27,9 +28,9 @@ register(
 )
 
 
-# Deterministic frozen lake
-env = gym.make("FrozenLakeDeterministic-v1")
-OUTPUT_DIR = "./docs/rl05"
+# Stochastic frozen lake
+env = gym.make("FrozenLakeStochastic-v1")
+OUTPUT_DIR = "./docs/rl06"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 plt.style.use("ggplot")
 
@@ -126,7 +127,7 @@ plt.bar(
 )
 plt.xlabel("Episode")
 plt.ylabel("Reward")
-reward_plot_path = os.path.join(OUTPUT_DIR, "rl05_rewards_per_episode.png")
+reward_plot_path = os.path.join(OUTPUT_DIR, "rl06_rewards_per_episode.png")
 plt.savefig(reward_plot_path, dpi=300)
 plt.close()
 print(f"Saved: {reward_plot_path}")
@@ -137,6 +138,6 @@ plt.title("Steps / Episode length")
 plt.bar(torch.arange(len(steps_total)), steps_total, alpha=0.6, color="red", width=5)
 plt.xlabel("Episode")
 plt.ylabel("Steps")
-steps_plot_path = os.path.join(OUTPUT_DIR, "rl05_steps_per_episode.png")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl06_steps_per_episode.png")
 plt.savefig(steps_plot_path, dpi=300)
 plt.close()
