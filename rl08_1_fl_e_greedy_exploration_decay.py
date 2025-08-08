@@ -29,6 +29,7 @@ plt.style.use("ggplot")
 NUM_EPISODES = 1000
 steps_total = []
 rewards_total = []
+epsilon_total = []
 
 # Initialize Q-table
 number_of_states = env.observation_space.n
@@ -40,8 +41,8 @@ Q = torch.zeros([number_of_states, number_of_actions])
 # of the Bellman eq for deterministic environments.
 GAMMA = 0.9
 LEARNING_RATE = 1
-EPSILON_INITIAL = 0.7
-EPSILON_FINAL = 0.1
+EPSILON_INITIAL = 0.9
+EPSILON_FINAL = 0.001
 EPSILON_DECAY = 0.999
 
 epsilon = EPSILON_INITIAL  # pylint: disable=invalid-name
@@ -83,11 +84,13 @@ for i_episode in range(NUM_EPISODES):
         if terminated:
             steps_total.append(step)
             rewards_total.append(reward)
+            epsilon_total.append(epsilon)
             break
 
         if truncated:
             steps_total.append(step)
             rewards_total.append(reward)
+            epsilon_total.append(epsilon)
             break
 
 
@@ -128,8 +131,6 @@ plt.ylabel("Reward")
 reward_plot_path = os.path.join(OUTPUT_DIR, "rl08b_rewards_per_episode_with_decay.png")
 plt.savefig(reward_plot_path, dpi=300)
 plt.close()
-print(f"Saved: {reward_plot_path}")
-
 
 plt.figure(figsize=(12, 5))
 plt.title("Steps / Episode length")
@@ -137,5 +138,16 @@ plt.bar(torch.arange(len(steps_total)), steps_total, alpha=0.6, color="red", wid
 plt.xlabel("Episode")
 plt.ylabel("Steps")
 steps_plot_path = os.path.join(OUTPUT_DIR, "rl08b_steps_per_episode_with_decay.png")
+plt.savefig(steps_plot_path, dpi=300)
+plt.close()
+
+plt.figure(figsize=(12, 5))
+plt.title("Epsilon greedy")
+plt.bar(
+    torch.arange(len(epsilon_total)), epsilon_total, alpha=0.6, color="blue", width=5
+)
+plt.xlabel("Episode")
+plt.ylabel("Epsilon")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl08b_epsilon_per_episode_with_decay.png")
 plt.savefig(steps_plot_path, dpi=300)
 plt.close()

@@ -91,7 +91,7 @@ Q(s, a) = (1 - α)Q(s, a) + α \cdot[r + \gamma \cdot \max_{a'} Q(s', a')]
 $$
 
 where:
-- *** $Q_{t-1}(s, a)$ ***: Old Q-value for the current *s, a* pair.
+- $Q_{t-1}(s, a)$: Old Q-value for the current *s, a* pair.
 
 - ***α***: Learning rate (0<α≤1). Controls balance between learning from new experiences and using experience.
     - α = 0: The agent never learns and its Q-values are never updated.
@@ -139,3 +139,35 @@ The ɛ greedy is varying through the episodes so that the exploration is favoure
             Figure 4: Steps per episode with exploration strategy using adaptative ɛ.
         </figcaption>
     </figure>
+    <figure style="margin: 0;">
+        <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl08/rl08b_epsilon_per_episode_with_decay.png" alt="Steps per episode after learning" style="width: 100%; max-width: 400px; display: block;">
+        <figcaption style="text-align: center; font-size: 0.9em; color: #555;">
+            Figure 5: ɛ per episode using adaptative ɛ.
+        </figcaption>
+    </figure>
+
+### rl09_fl_value_iteration
+Instead of Q-values, the V-values are used.
+
+The V-value at a state *s* for a given policy $\pi$ is:
+$$
+V(s) := \sum_{s'} P_{\pi(s)}(s, s') (R_{\pi(s)}(s, s') + \gamma V(s'))
+$$
+
+It calculates the expected return from state *s* by summing the rewards and discounted future values of all possible next states (*s′*) weighted by their probabilities $P_{\pi(s)}(s, s')$ under policy $\pi$. Here $R_{\pi(s)}(s, s')$ is the inmediate reward received by the agent when trasitoning from *s* to *s'*. The $P_{\pi(s)}(s, s')$ represents the probability of transitioning from state *s* to state *s′*, given that the agent is in state *s* and takes the action specified by its policy $\pi$.
+
+
+
+The optimal policy $\pi(s)$ is given by:
+
+$$
+\pi(s) := \arg \max_{a} \left\{ \sum_{s'} P_{a}(s, s') [R_{a}(s, s') + \gamma V(s')] \right\}
+$$
+
+It states that the best action to take in state *s* is the one that maximizes the expected value of the resulting state, essentially choosing the action that leads to the highest potential reward.
+
+The value iteration algorithm is an iterative method to find the optimal value function by repeatedly updating the value of each  *V(s)* to equal the maximum expected value achievable from that state. This process continues until the values converge to the optimal values.
+
+$$
+V_{i+1}(s) := \max_{a} \left\{ \sum_{s'} P_{a}(s, s') (R_{a}(s, s') + \gamma V_i(s')) \right\}
+$$

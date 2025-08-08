@@ -115,8 +115,6 @@ plt.ylabel("Reward")
 reward_plot_path = os.path.join(OUTPUT_DIR, "rl08_rewards_per_episode.png")
 plt.savefig(reward_plot_path, dpi=300)
 plt.close()
-print(f"Saved: {reward_plot_path}")
-
 
 plt.figure(figsize=(12, 5))
 plt.title("Steps / Episode length")
