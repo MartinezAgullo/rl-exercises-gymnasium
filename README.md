@@ -67,31 +67,40 @@ Percent of episodes finished successfully (last 200 episodes): 2.5%
 
 ### rl07_frozen_lake_stochastic_q_learning.py
 To properly account for this randomness in what is *s'* going to be after doing *a*, the Bellman equation must be modified to use an expectation.  For this purpose the temporal difference (TD) or TD error is used:
+
 $$
 TD(s, a) = [r + \gamma \cdot \max_{a'} Q(s', a')] - [Q(s, a)]
 $$
+
 and the new Q-value for the *(s, a)* pair at a time *t* is:
+
 $$
 Q_{t}(s, a) = Q_{t-1}(s, a) + α * TD
 $$
+
 and hence
+
 $$
 Q(s, a) = Q(s, a) + α * [r + \gamma \cdot \max_{a'} Q(s', a') - Q(s, a)]
 $$
+
 rewritten:
+
 $$
 Q(s, a) = (1 - α)Q(s, a) + α *[r + \gamma \cdot \max_{a'} Q(s', a')]
 $$
 
 where:
-- ***Q_{t-1}(s, a)***: Old Q-value for the current *s, a* pair.
+- ***$Q_{t-1}(s, a)$***: Old Q-value for the current *s, a* pair.
 
 - ***α***: Learning rate (0<α≤1). Controls balance between learning from new experiences and using experience.
     - α = 0: The agent never learns and its Q-values are never updated.
-            Therefore: *Q(s, a) = Q(s, a)*
+            Therefore:
+            *$Q(s, a) = Q(s, a)$*
 
     - α = 1: The agent only takes into account the most recent experience and the old Q-value is completely replaced by the new one.
-            Therefore: *Q(s, a) = r + \gamma \cdot \max_{a'} Q(s', a')* (Bellman Equation)
+            Therefore:
+            *$Q(s, a) = r + \gamma \cdot \max_{a'} Q(s', a')$* (Bellman Equation)
 
 ```console
 Traning completed after 10000 episodes.
