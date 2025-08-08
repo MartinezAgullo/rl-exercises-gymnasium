@@ -53,7 +53,7 @@ for i_episode in range(NUM_EPISODES):
         random_values = Q[state] + torch.rand(1, number_of_actions) / 1000
 
         # generate random number to compare with epsilon
-        random_for_egreedy = random_for_egreedy = torch.rand(1).item()
+        random_for_egreedy = torch.rand(1).item()
         if random_for_egreedy < EPSILON:
             # Explore new actions - Random movement
             action = env.action_space.sample()
@@ -63,7 +63,7 @@ for i_episode in range(NUM_EPISODES):
 
         new_state, reward, terminated, truncated, info = env.step(action)
 
-        # Algorithm for stochastic environment
+        # Q-value
         Q[state, action] = (1 - LEARNING_RATE) * Q[state, action] + LEARNING_RATE * (
             reward + GAMMA * torch.max(Q[new_state])
         )

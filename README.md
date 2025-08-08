@@ -110,12 +110,12 @@ Hyperparameters:
 Percent of episodes finished successfully: 45.61%
 Percent of episodes finished successfully (last 100 episodes): 87.0%
 ```
-### rl08_fl_e_greedy_exploration.py
+### rl08_0_fl_e_greedy_exploration.py
 Include an ɛ-greedy exploration strategy.
     <figure style="margin: 0;">
         <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl08/rl08_steps_per_episode.png" alt="Steps per episode before learning" style="width: 100%; max-width: 400px; display: block;">
         <figcaption style="text-align: center; font-size: 0.9em; color: #555;">
-            Figure 3: Steps per episode with exploration strategy. Note how, while optimal is known, from time a different path is explored.
+            Figure 3: Steps per episode with exploration strategy. Note how, while optimal is known, from time to time a different path is explored.
         </figcaption>
     </figure>
 
@@ -130,3 +130,12 @@ Percent of episodes finished successfully (last 100 episodes): 91.0%
 Average number of steps: 6.59
 Average number of steps (last 100 episodes): 6.47
 ```
+
+### rl08_1_fl_e_greedy_exploration.py
+The ɛ greedy is varying through the episodes so that the exploration is favoured in the first episodes.
+    <figure style="margin: 0;">
+        <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl08/rl08b_steps_per_episode_with_decay.png" alt="Steps per episode before learning" style="width: 100%; max-width: 400px; display: block;">
+        <figcaption style="text-align: center; font-size: 0.9em; color: #555;">
+            Figure 4: Steps per episode with exploration strategy using adaptative ɛ.
+        </figcaption>
+    </figure>
