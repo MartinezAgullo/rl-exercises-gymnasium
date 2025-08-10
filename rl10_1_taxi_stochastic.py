@@ -1,6 +1,7 @@
 """
-Solving Gymansium's Taxi-v3
-Using adaptative epsilon greedy strategy
+Solving Gymansium's Taxi-v3 - Stochastic
+- Bellamn eq
+- Exploration with adaptative epsilon greedy strategy
 """
 
 import os
@@ -11,7 +12,7 @@ import torch
 from gymnasium.wrappers import RecordVideo
 
 env = gym.make(
-    "Taxi-v3", is_rainy=False, fickle_passenger=False, render_mode="rgb_array"
+    "Taxi-v3", is_rainy=True, fickle_passenger=False, render_mode="rgb_array"
 )
 OUTPUT_DIR = "./docs/rl10"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -33,7 +34,7 @@ Q = torch.zeros([number_of_states, number_of_actions])
 
 # Hyperparameters
 GAMMA = 0.9
-LEARNING_RATE = 1
+LEARNING_RATE = 0.1
 EPSILON_INITIAL = 0.9
 EPSILON_FINAL = 0.001
 EPSILON_DECAY = 0.999
@@ -70,7 +71,7 @@ for i_episode in range(NUM_EPISODES):
             reward + GAMMA * torch.max(Q[new_state])
         )
 
-        env.render()
+        # env.render()
 
         state = new_state
 
@@ -120,7 +121,7 @@ plt.bar(
 )
 plt.xlabel("Episode")
 plt.ylabel("Reward")
-reward_plot_path = os.path.join(OUTPUT_DIR, "rl10_rewards_per_episode.png")
+reward_plot_path = os.path.join(OUTPUT_DIR, "rl10_1_rewards_per_episode.png")
 plt.savefig(reward_plot_path, dpi=300)
 plt.close()
 
@@ -129,7 +130,7 @@ plt.title("Steps / Episode length")
 plt.bar(torch.arange(len(steps_total)), steps_total, alpha=0.6, color="red", width=5)
 plt.xlabel("Episode")
 plt.ylabel("Steps")
-steps_plot_path = os.path.join(OUTPUT_DIR, "rl10_steps_per_episode.png")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl10_1_steps_per_episode.png")
 plt.savefig(steps_plot_path, dpi=300)
 plt.close()
 
@@ -141,6 +142,6 @@ plt.bar(
 )
 plt.xlabel("Episode")
 plt.ylabel("Epsilon")
-steps_plot_path = os.path.join(OUTPUT_DIR, "rl10_epsilon_per_episode_with_decay.png")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl10_1_epsilon_per_episode_with_decay.png")
 plt.savefig(steps_plot_path, dpi=300)
 plt.close()

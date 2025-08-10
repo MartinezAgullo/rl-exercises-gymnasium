@@ -190,6 +190,9 @@ Apply the adaptative ɛ greedy strategy in the [Taxi](https://gymnasium.farama.o
         </figcaption>
     </figure>
 
+<a href="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl10/rl10_1_taxi_stochastic_episode_200.mp4">
+    <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl10/rl10_video_thumbnail.png" alt="Video of Taxi-v3 environment" style="width: 100%; max-width: 400px; display: block;">
+</a>
 
 <!-- ```console
 Traning completed after 300 episodes.
@@ -206,3 +209,16 @@ Percent of episodes finished successfully (last 100 episodes): 100.0%
 Average number of steps: 63.25
 Average number of steps (last 100 episodes): 19.71
 ``` -->
+
+
+# rl11_
+**Scaling Up Reinforcement Learning**
+Q-tables are inefficient for environments with a very large number of states, a situation known as the "curse of dimensionality." In these scenarios, it's highly probable the agent will encounter states it has never seen before, making a complete table lookup impossible.-
+
+To address this, we use function approximation:
+
+- **Generalize**: Instead of relying on lookups on a complete Q-table, we use a single, generalized function to estimate the Q-value for any given state. This function can provide a value even for states the agent has never visited.
+
+- **Function Approximation**: This approach allows the agent to learn the underlying rules of the environment and apply them to similar situations, whether they've been seen before or not. By identifying patterns, the function can make educated guesses about the value of unseen states.
+
+NNs are an excellent solution for function approximation. They can learn to map states to their corresponding Q-values, allowing for effective reinforcement learning in complex, large-scale environments
