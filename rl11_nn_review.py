@@ -1,5 +1,7 @@
 """
 Review fof NNs basics
+
+Prediction of lienar behaviour
 """
 
 import os
@@ -19,6 +21,7 @@ WEIGHT = 2
 BIAS = 0.3
 
 x = torch.arange(100, dtype=torch.float).unsqueeze(1).to(DEVICE)
+# x =  tensor([ 0.,  1.,  2.,  3.,  4., ..., 98., 99.])
 # unsqueeze: Returns a new tensor with a dimension of
 #            size one inserted at the specified position.
 

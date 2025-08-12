@@ -191,7 +191,10 @@ Apply the adaptative ɛ greedy strategy in the [Taxi](https://gymnasium.farama.o
     </figure>
 
 <a href="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl10/rl10_1_taxi_stochastic_episode_200.mp4">
-    <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl10/rl10_video_thumbnail.png" alt="Video of Taxi-v3 environment" style="width: 100%; max-width: 400px; display: block;">
+    <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl10/rl10_video_thumbnail.png" alt="Video of Taxi-v3 environment" style="width: 70%; max-width: 400px; display: block;">
+    <figcaption style="text-align: center; font-size: 0.9em; color: #555;">
+            Figure 8: Animation of our taxi agent.
+    </figcaption>
 </a>
 
 <!-- ```console
@@ -211,7 +214,7 @@ Average number of steps (last 100 episodes): 19.71
 ``` -->
 
 
-# rl11_
+# rl11_nn_review
 **Scaling Up Reinforcement Learning**
 Q-tables are inefficient for environments with a very large number of states, a situation known as the "curse of dimensionality." In these scenarios, it's highly probable the agent will encounter states it has never seen before, making a complete table lookup impossible.-
 
@@ -222,3 +225,22 @@ To address this, we use function approximation:
 - **Function Approximation**: This approach allows the agent to learn the underlying rules of the environment and apply them to similar situations, whether they've been seen before or not. By identifying patterns, the function can make educated guesses about the value of unseen states.
 
 NNs are an excellent solution for function approximation. They can learn to map states to their corresponding Q-values, allowing for effective reinforcement learning in complex, large-scale environments
+
+## rl12_cart_pole_random_new.py
+Same as [rl01_cartpole_random.py](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/rl01_cartpole_random.py)
+
+## rl13_cart_pole_egreedy.py
+Implement the addaptative $\epsilon$-greedy strategy in the [rl12_cart_pole_random_new.py](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/rl12_cart_pole_random_new.py) environment using:
+    - Exponential decay formula: Using a $\tau$ decay rate
+
+        $$
+        \epsilon = \epsilon_{final} + (\epsilon_{initial} - \epsilon_{final}) \cdot e^{-\frac{steps_{done}}{\tau}}
+        $$
+
+    - Multiplicative decay: Using a decay $\gamma$ rate
+
+        $$
+        \epsilon_{t+1} = \epsilon_t \cdot \gamma
+        $$
+
+## rl14_cart_pole_nn.py
