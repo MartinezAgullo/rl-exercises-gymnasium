@@ -190,12 +190,15 @@ Apply the adaptative ɛ greedy strategy in the [Taxi](https://gymnasium.farama.o
         </figcaption>
     </figure>
 
+<div style="text-align: center;">
 <a href="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl10/rl10_1_taxi_stochastic_episode_200.mp4">
     <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl10/rl10_video_thumbnail.png" alt="Video of Taxi-v3 environment" style="width: 70%; max-width: 400px; display: block;">
+    <br>
     <figcaption style="text-align: center; font-size: 0.9em; color: #555;">
             Figure 8: Animation of our taxi agent.
     </figcaption>
 </a>
+</div>
 
 <!-- ```console
 Traning completed after 300 episodes.
@@ -231,11 +234,13 @@ Same as [rl01_cartpole_random.py](https://github.com/MartinezAgullo/rl-exercises
 
 ## rl13_cart_pole_egreedy.py
 Implement the addaptative $\epsilon$-greedy strategy in the [rl12_cart_pole_random_new.py](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/rl12_cart_pole_random_new.py) environment using:
+
     - Exponential decay formula: Using a $\tau$ decay rate
 
         $$
         \epsilon = \epsilon_{final} + (\epsilon_{initial} - \epsilon_{final}) \cdot e^{-\frac{steps_{done}}{\tau}}
         $$
+
 
     - Multiplicative decay: Using a decay $\gamma$ rate
 
@@ -244,3 +249,4 @@ Implement the addaptative $\epsilon$-greedy strategy in the [rl12_cart_pole_rand
         $$
 
 ## rl14_cart_pole_nn.py
+[CartPole](https://gymnasium.farama.org/environments/classic_control/cart_pole/)-v1 environment using a Q-Learning algorithm with a single-layer neural network and an addaptative $\epsilon$-greedy strategy.

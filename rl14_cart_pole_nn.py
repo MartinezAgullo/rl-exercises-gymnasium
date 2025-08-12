@@ -33,7 +33,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 # --- NN and QNet Agent definitions ---
-number_of_states = env.observation_space.n
+number_of_states = env.observation_space.shape[0]
 number_of_outputs = env.action_space.n
 
 print(
@@ -78,13 +78,13 @@ class QNetAgent:
         if random_for_egreedy > agnt_epsilon:
             # Best possible movement
             with torch.no_grad():
-
+                # no_grad :: Won't perform backpropagation
                 agnt_state = Tensor(agnt_state).to(DEVICE)
                 action_from_nn = self.nn(agnt_state)
                 action = torch.max(action_from_nn, 0)[1]
                 action = action.item()
         else:
-            # Random movement
+            # Explroation: Random movement
             action = env.action_space.sample()
 
         return action
@@ -150,6 +150,8 @@ steps_total = []
 rewards_total = []
 epsilon_total = []
 losses = []
+total_steps = 0  # pylint: disable=invalid-name
+# total_steps controls the epsilon greedy
 
 # --- Main loop ---
 qnet_agent = QNetAgent()
@@ -163,8 +165,10 @@ for i_episode in range(NUM_EPISODES):
     while True:
 
         step += 1
+        total_steps += 1
 
         step_action = qnet_agent.select_action(state, epsilon)
+        epsilon = calculate_epsilon_exp(total_steps)
 
         new_state, reward, terminated, truncated, _ = env.step(step_action)
 
@@ -207,12 +211,44 @@ for i_episode in range(NUM_EPISODES):
             break
 
 
+# --- Plotting ---
+
 # Plot for loss vs episode
 plt.figure(figsize=(12, 5))
-plt.plot(range(NUM_EPISODES), losses, alpha=0.6, color="blue")
+plt.plot(range(len(losses)), losses, alpha=0.6, color="blue")
 plt.title("Loss vs. Episode")
 plt.xlabel("Episode")
 plt.ylabel("Loss")
 loss_plot_path = os.path.join(OUTPUT_DIR, "rl14_loss_vs_episode.png")
 plt.savefig(loss_plot_path, dpi=300)
+plt.close()
+
+# Plot for steps per episode
+plt.figure(figsize=(12, 5))
+plt.plot(range(len(steps_total)), steps_total, alpha=0.6, color="red")
+plt.title("Steps per Episode")
+plt.xlabel("Episode")
+plt.ylabel("Steps")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl14_steps_per_episode.png")
+plt.savefig(steps_plot_path, dpi=300)
+plt.close()
+
+# Plot for rewards per episode
+plt.figure(figsize=(12, 5))
+plt.plot(range(len(rewards_total)), rewards_total, alpha=0.6, color="green")
+plt.title("Rewards per Episode")
+plt.xlabel("Episode")
+plt.ylabel("Reward")
+rewards_plot_path = os.path.join(OUTPUT_DIR, "rl14_rewards_per_episode.png")
+plt.savefig(rewards_plot_path, dpi=300)
+plt.close()
+
+# Plot for epsilon per episode
+plt.figure(figsize=(12, 5))
+plt.plot(range(len(epsilon_total)), epsilon_total, alpha=0.6, color="purple")
+plt.title("Epsilon per Episode")
+plt.xlabel("Episode")
+plt.ylabel("Epsilon")
+epsilon_plot_path = os.path.join(OUTPUT_DIR, "rl14_epsilon_per_episode.png")
+plt.savefig(epsilon_plot_path, dpi=300)
 plt.close()
