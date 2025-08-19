@@ -217,7 +217,7 @@ Average number of steps (last 100 episodes): 19.71
 ``` -->
 
 
-# rl11_nn_review
+### rl11_nn_review
 **Scaling Up Reinforcement Learning**
 Q-tables are inefficient for environments with a very large number of states, a situation known as the "curse of dimensionality." In these scenarios, it's highly probable the agent will encounter states it has never seen before, making a complete table lookup impossible.-
 
@@ -229,24 +229,30 @@ To address this, we use function approximation:
 
 NNs are an excellent solution for function approximation. They can learn to map states to their corresponding Q-values, allowing for effective reinforcement learning in complex, large-scale environments
 
-## rl12_cart_pole_random_new.py
+### rl12_cart_pole_random_new.py
 Same as [rl01_cartpole_random.py](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/rl01_cartpole_random.py)
 
-## rl13_cart_pole_egreedy.py
+### rl13_cart_pole_egreedy.py
 Implement the addaptative $\epsilon$-greedy strategy in the [rl12_cart_pole_random_new.py](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/rl12_cart_pole_random_new.py) environment using:
 
-    - Exponential decay formula: Using a $\tau$ decay rate
+- Exponential decay formula: Using a $\tau$ decay rate
 
-        $$
-        \epsilon = \epsilon_{final} + (\epsilon_{initial} - \epsilon_{final}) \cdot e^{-\frac{steps_{done}}{\tau}}
-        $$
+\\[
+\epsilon = \epsilon_{final} + (\epsilon_{initial} - \epsilon_{final}) \cdot e^{-\tfrac{steps_{done}}{\tau}}
+\\]
 
 
-    - Multiplicative decay: Using a decay $\gamma$ rate
+- Multiplicative decay: Using a decay $\gamma$ rate
 
-        $$
-        \epsilon_{t+1} = \epsilon_t \cdot \gamma
-        $$
+\\[
+\epsilon_{t+1} = \epsilon_t \cdot \gamma
+\\]
 
-## rl14_cart_pole_nn.py
+### rl14_cart_pole_nn.py
 [CartPole](https://gymnasium.farama.org/environments/classic_control/cart_pole/)-v1 environment using a Q-Learning algorithm with a single-layer neural network and an addaptative $\epsilon$-greedy strategy.
+
+### rl15_cart_pole_nn_log.py
+Improved logging.
+
+### rl16_cart_pole_nn_2_layers.py
+Adding additional hiden layer like in [Playing Atari with Deep Reinforcement Learning](https://arxiv.org/pdf/1312.5602). As expected, the [rewards now](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl16/rl16_steps_per_episode.png) are much better than the [previous](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl15/rl15_steps_per_episode.png).

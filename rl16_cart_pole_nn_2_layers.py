@@ -17,13 +17,14 @@ NUM_EPISODES = 1000
 REPORT_INTERVAL = 10
 
 # --- Plotting directory --
-OUTPUT_DIR = "./docs/rl15"
+OUTPUT_DIR = "./docs/rl16"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 plt.style.use("ggplot")
 
 # --- HYPERPARAMETERS ---
+HIDDEN_LAYER = 64
 LEARNING_RATE = 0.01
-NUM_EPISODES = 1000
+NUM_EPISODES = 500
 GAMMA = 0.85
 
 EPSILON_INITIAL = 0.9
@@ -46,16 +47,22 @@ print(
 
 
 class NeuralNetwork(nn.Module):
-    """A simple neural network with one linear layer."""
+    """A simple neural network with two layers."""
 
     def __init__(self):
         super().__init__()
-        self.linear1 = nn.Linear(number_of_states, number_of_outputs)
+        self.linear1 = nn.Linear(number_of_states, HIDDEN_LAYER)
+        self.linear2 = nn.Linear(HIDDEN_LAYER, number_of_outputs)
+
+        self.activation = nn.Tanh()
+        # self.activation = nn.ReLU()
 
     def forward(self, x_in):
         """Forward pass of the network."""
-        output = self.linear1(x_in)
-        return output
+        output1 = self.linear1(x_in)
+        output1 = self.activation(output1)
+        output2 = self.linear2(output1)
+        return output2
 
 
 class QNetAgent:
@@ -180,7 +187,7 @@ for i_episode in range(NUM_EPISODES):
 
         new_state, reward, terminated, truncated, _ = env.step(step_action)
 
-        episode_reward_return += reward
+        episode_reward_return += reward  # accumulate reward
 
         done = terminated or truncated
 
@@ -234,7 +241,7 @@ plt.plot(range(len(losses)), losses, alpha=0.6, color="blue")
 plt.title("Loss vs. Episode")
 plt.xlabel("Episode")
 plt.ylabel("Loss")
-loss_plot_path = os.path.join(OUTPUT_DIR, "rl15_loss_vs_episode.png")
+loss_plot_path = os.path.join(OUTPUT_DIR, "rl16_loss_vs_episode.png")
 plt.savefig(loss_plot_path, dpi=300)
 plt.close()
 
@@ -244,7 +251,7 @@ plt.plot(range(len(steps_total)), steps_total, alpha=0.6, color="red")
 plt.title("Steps per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Steps")
-steps_plot_path = os.path.join(OUTPUT_DIR, "rl15_steps_per_episode.png")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl16_steps_per_episode.png")
 plt.savefig(steps_plot_path, dpi=300)
 plt.close()
 
@@ -254,7 +261,7 @@ plt.plot(range(len(rewards_total)), rewards_total, alpha=0.6, color="green")
 plt.title("Rewards per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Reward")
-rewards_plot_path = os.path.join(OUTPUT_DIR, "rl15_rewards_per_episode.png")
+rewards_plot_path = os.path.join(OUTPUT_DIR, "rl16_rewards_per_episode.png")
 plt.savefig(rewards_plot_path, dpi=300)
 plt.close()
 
@@ -264,6 +271,6 @@ plt.plot(range(len(epsilon_total)), epsilon_total, alpha=0.6, color="purple")
 plt.title("Epsilon per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Epsilon")
-epsilon_plot_path = os.path.join(OUTPUT_DIR, "rl15_epsilon_per_episode.png")
+epsilon_plot_path = os.path.join(OUTPUT_DIR, "rl16_epsilon_per_episode.png")
 plt.savefig(epsilon_plot_path, dpi=300)
 plt.close()
