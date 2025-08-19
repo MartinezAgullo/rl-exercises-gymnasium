@@ -237,16 +237,11 @@ Implement the addaptative $\epsilon$-greedy strategy in the [rl12_cart_pole_rand
 
 - Exponential decay formula: Using a $\tau$ decay rate
 
-\\[
-\epsilon = \epsilon_{final} + (\epsilon_{initial} - \epsilon_{final}) \cdot e^{-\tfrac{steps_{done}}{\tau}}
-\\]
-
+$$ \epsilon = \epsilon_{final} + (\epsilon_{initial} - \epsilon_{final}) \cdot e^{-\tfrac{steps_{done}}{\tau}} $$
 
 - Multiplicative decay: Using a decay $\gamma$ rate
 
-\\[
-\epsilon_{t+1} = \epsilon_t \cdot \gamma
-\\]
+$$ \epsilon_{t+1} = \epsilon_t \cdot \gamma $$
 
 ### rl14_cart_pole_nn.py
 [CartPole](https://gymnasium.farama.org/environments/classic_control/cart_pole/)-v1 environment using a Q-Learning algorithm with a single-layer neural network and an addaptative $\epsilon$-greedy strategy.
@@ -255,4 +250,10 @@ Implement the addaptative $\epsilon$-greedy strategy in the [rl12_cart_pole_rand
 Improved logging.
 
 ### rl16_cart_pole_nn_2_layers.py
-Adding additional hiden layer like in [Playing Atari with Deep Reinforcement Learning](https://arxiv.org/pdf/1312.5602). As expected, the [rewards now](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl16/rl16_steps_per_episode.png) are much better than the [previous](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl15/rl15_steps_per_episode.png).
+Adding additional hiden layer like in [Playing Atari with Deep Reinforcement Learning](https://arxiv.org/pdf/1312.5602). As expected, the [rewards now](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl16/rl16_steps_per_episode.png) are much better than the [previous](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl15/rl15_steps_per_episode.png) ones. Nevertheless, some inestabilies are observed. These inestabilies could be done to the fact that since the agent is moving forward, the next state will be very similar to the current one. Training a NN on a stream of highly correlated data can lead to instability and poor performance, as the network gets stuck in local minima. This will be latter soved in [rl18_cart_pole_experience_replay.py](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/rl18_cart_pole_experience_replay.py).
+
+### rl17_cart_pole_nn_2_layers.py
+The same [Cart Pole](https://gymnasium.farama.org/environments/classic_control/cart_pole/) as in [rl16_cart_pole_nn_2_layers.py](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/rl16_cart_pole_nn_2_layers.py) but with better hyperparameters.
+
+### rl18_cart_pole_experience_replay
+To alleviate the problems of correlated data and non-stationary distributions, we use an ([experience replay mechanism](https://apps.dtic.mil/sti/tr/pdf/ADA261434.pdf)) which randomly samples previous transitions, and thereby smooths the training distribution over many past behaviors.  Instead of training on experiences in the order they occur, the agent stores them in a data structure called a replay buffer.

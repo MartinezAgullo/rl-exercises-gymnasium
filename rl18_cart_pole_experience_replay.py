@@ -1,15 +1,17 @@
 """
-CartPole using Gymnasium - Add hidden layer
+CartPole using Gymnasium - Experience reply
 """
 
 import math
 import os
+import random
 import time
+from typing import Any
 
 import gymnasium as gym
 import matplotlib.pyplot as plt
 import torch
-from torch import Tensor, nn, optim
+from torch import LongTensor, Tensor, nn, optim
 
 # --- Environment Setup --
 env = gym.make("CartPole-v1")
@@ -17,15 +19,18 @@ NUM_EPISODES = 1000
 REPORT_INTERVAL = 10
 
 # --- Plotting directory --
-OUTPUT_DIR = "./docs/rl16"
+OUTPUT_DIR = "./docs/rl18"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 plt.style.use("ggplot")
 
 # --- HYPERPARAMETERS ---
 HIDDEN_LAYER = 64
-LEARNING_RATE = 0.01
+LEARNING_RATE = 0.02
 NUM_EPISODES = 500
-GAMMA = 0.85
+GAMMA = 0.99
+
+REPLAY_MEM_SIZE = 50000
+BATCH_SIZE = 32
 
 EPSILON_INITIAL = 0.9
 EPSILON_FINAL = 0.02
@@ -33,6 +38,67 @@ EPSILON_DECAY = 500
 
 # --- GPU ussage ---
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+
+# --- Experience reply ---
+class ExperienceReplay:
+    """
+    A fixed-size buffer that stores experience tuples and
+    allows sampling for training reinforcement learning agents.
+    """
+
+    def __init__(self, capacity: int) -> None:
+        """
+        Initialize the replay memory.
+
+        Args:
+            capacity (int): Maximum number of experiences to store.
+        """
+        self.capacity = capacity
+        self.memory = []  # type: ignore[var-annotated]
+        self.position = 0
+
+    # pylint: disable=too-many-arguments
+    def push(
+        self, state: Any, action: int, next_state: Any, reward: float, is_done: bool
+    ) -> None:
+        """
+        Store a transition in memory.
+
+        Args:
+            state: Current state.
+            action: Action taken.
+            next_state: Resulting state.
+            reward: Reward received.
+            done: Whether the episode ended.
+        """
+        transition = (state, action, next_state, reward, is_done)
+
+        if self.position >= len(self.memory):
+            # new entry
+            self.memory.append(transition)
+        else:
+            # override
+            self.memory[self.position] = transition
+
+        self.position = (self.position + 1) % self.capacity
+
+    def sample(self, batch_size: int):
+        """
+        Sample a rndm batch of experiences from memory.
+
+        Args:
+            batch_size (int): Number of experiences to sample.
+
+        Returns:
+            A tuple of lists: (states, actions, next_states, rewards, dones)
+        """
+        # zip(*) :: Argument unpacking (*) to reverse the zip process
+        return zip(*random.sample(self.memory, batch_size))
+
+    def __len__(self) -> int:
+        """Return the current size of internal memory."""
+        return len(self.memory)
 
 
 # --- NN and QNet Agent definitions ---
@@ -98,43 +164,36 @@ class QNetAgent:
 
         return action
 
-    def optimize(
-        self, agnt_state, action, next_state, agnt_reward, is_done
-    ):  # pylint: disable=too-many-arguments
+    def optimize(self):
         """
-        Implements Bellman equation and uses it to tune the NN
-
-        target_value :: Uses Bellamn equation to determine best
-                        possible action. Similar to real Q-value.
-
-        predicted_value :: Stimation by the NN of the Q-Value.
-                           What the agent thinks is the best
-                           action.
-
+        Use Experience Replay and Bellman equation to train the NN.
         """
+
+        if len(memory) < BATCH_SIZE:
+            return None
+
+        # Sample batch from memory
+        agnt_state, action, next_state, agnt_reward, is_done = memory.sample(BATCH_SIZE)
+
+        # Convert to tensors
         agnt_state = Tensor(agnt_state).to(DEVICE)
         next_state = Tensor(next_state).to(DEVICE)
         agnt_reward = Tensor([agnt_reward]).to(DEVICE)
+        action = LongTensor(action).to(DEVICE)
 
-        # Target value behaves like Q-value
         if is_done:
-            # If done, deterministic Bellman equation is
-            # just reward because there is not next state
-            target_value = agnt_reward
+            target_q_value = agnt_reward
         else:
             next_state_values = self.nn(next_state).detach()
-            # detach() means that no gradients will be calculated
-            # to update NN parameters
             max_next_state_values = torch.max(next_state_values)
 
-            # Bellman for determinsitic
-            target_value = agnt_reward + GAMMA * max_next_state_values
+            target_q_value = agnt_reward + GAMMA * max_next_state_values
 
-        # predicted_value <-- Agent's NN current stimate of Q-value
-        predicted_value = self.nn(agnt_state)[action]
+        predicted_q_value = (
+            self.nn(agnt_state).gather(1, action.unsqueeze(1)).squeeze(1)
+        )
 
-        # Compare predicted (agent's) and target (Bellman)
-        loss = self.loss_func(predicted_value, target_value)
+        loss = self.loss_func(predicted_q_value, target_q_value)
 
         self.optimizer.zero_grad()
         loss.backward()
@@ -169,11 +228,12 @@ start_time = time.time()
 
 # --- Main loop ---
 qnet_agent = QNetAgent()
+memory = ExperienceReplay(REPLAY_MEM_SIZE)
 
 epsilon = EPSILON_INITIAL  # pylint: disable=invalid-name
 
 for i_episode in range(NUM_EPISODES):
-    state, _ = env.reset()
+    current_state, _ = env.reset()
     episode_reward_return = 0.0  # pylint: disable=invalid-name
     step = 0  # pylint: disable=invalid-name
 
@@ -182,19 +242,19 @@ for i_episode in range(NUM_EPISODES):
         step += 1
         total_steps += 1
 
-        step_action = qnet_agent.select_action(state, epsilon)
+        step_action = qnet_agent.select_action(current_state, epsilon)
         epsilon = calculate_epsilon_exp(total_steps)
 
-        new_state, reward, terminated, truncated, _ = env.step(step_action)
+        new_state, received_reward, terminated, truncated, _ = env.step(step_action)
 
-        episode_reward_return += reward  # accumulate reward
+        episode_reward_return += received_reward
 
         done = terminated or truncated
 
-        # qnet_agent.optimize(state, new_state, reward, done)
-        step_loss = qnet_agent.optimize(state, step_action, new_state, reward, done)
+        memory.push(current_state, step_action, new_state, received_reward, done)
+        step_loss = qnet_agent.optimize()
 
-        state = new_state
+        current_state = new_state
 
         # --- Termination conditons (terminated/truncated) ---
         if done:
@@ -241,7 +301,7 @@ plt.plot(range(len(losses)), losses, alpha=0.6, color="blue")
 plt.title("Loss vs. Episode")
 plt.xlabel("Episode")
 plt.ylabel("Loss")
-loss_plot_path = os.path.join(OUTPUT_DIR, "rl16_loss_vs_episode.png")
+loss_plot_path = os.path.join(OUTPUT_DIR, "rl18_loss_vs_episode.png")
 plt.savefig(loss_plot_path, dpi=300)
 plt.close()
 
@@ -251,7 +311,7 @@ plt.plot(range(len(steps_total)), steps_total, alpha=0.6, color="red")
 plt.title("Steps per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Steps")
-steps_plot_path = os.path.join(OUTPUT_DIR, "rl16_steps_per_episode.png")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl18_steps_per_episode.png")
 plt.savefig(steps_plot_path, dpi=300)
 plt.close()
 
@@ -261,7 +321,7 @@ plt.plot(range(len(rewards_total)), rewards_total, alpha=0.6, color="green")
 plt.title("Rewards per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Reward")
-rewards_plot_path = os.path.join(OUTPUT_DIR, "rl16_rewards_per_episode.png")
+rewards_plot_path = os.path.join(OUTPUT_DIR, "rl18_rewards_per_episode.png")
 plt.savefig(rewards_plot_path, dpi=300)
 plt.close()
 
@@ -271,6 +331,6 @@ plt.plot(range(len(epsilon_total)), epsilon_total, alpha=0.6, color="purple")
 plt.title("Epsilon per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Epsilon")
-epsilon_plot_path = os.path.join(OUTPUT_DIR, "rl16_epsilon_per_episode.png")
+epsilon_plot_path = os.path.join(OUTPUT_DIR, "rl18_epsilon_per_episode.png")
 plt.savefig(epsilon_plot_path, dpi=300)
 plt.close()

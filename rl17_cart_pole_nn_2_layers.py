@@ -1,5 +1,5 @@
 """
-CartPole using Gymnasium - Add hidden layer
+CartPole using Gymnasium - Optimise hyperparam
 """
 
 import math
@@ -17,15 +17,15 @@ NUM_EPISODES = 1000
 REPORT_INTERVAL = 10
 
 # --- Plotting directory --
-OUTPUT_DIR = "./docs/rl16"
+OUTPUT_DIR = "./docs/rl17"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 plt.style.use("ggplot")
 
 # --- HYPERPARAMETERS ---
 HIDDEN_LAYER = 64
-LEARNING_RATE = 0.01
+LEARNING_RATE = 0.02
 NUM_EPISODES = 500
-GAMMA = 0.85
+GAMMA = 0.99
 
 EPSILON_INITIAL = 0.9
 EPSILON_FINAL = 0.02
@@ -241,7 +241,7 @@ plt.plot(range(len(losses)), losses, alpha=0.6, color="blue")
 plt.title("Loss vs. Episode")
 plt.xlabel("Episode")
 plt.ylabel("Loss")
-loss_plot_path = os.path.join(OUTPUT_DIR, "rl16_loss_vs_episode.png")
+loss_plot_path = os.path.join(OUTPUT_DIR, "rl17_loss_vs_episode.png")
 plt.savefig(loss_plot_path, dpi=300)
 plt.close()
 
@@ -251,7 +251,7 @@ plt.plot(range(len(steps_total)), steps_total, alpha=0.6, color="red")
 plt.title("Steps per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Steps")
-steps_plot_path = os.path.join(OUTPUT_DIR, "rl16_steps_per_episode.png")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl17_steps_per_episode.png")
 plt.savefig(steps_plot_path, dpi=300)
 plt.close()
 
@@ -261,7 +261,7 @@ plt.plot(range(len(rewards_total)), rewards_total, alpha=0.6, color="green")
 plt.title("Rewards per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Reward")
-rewards_plot_path = os.path.join(OUTPUT_DIR, "rl16_rewards_per_episode.png")
+rewards_plot_path = os.path.join(OUTPUT_DIR, "rl17_rewards_per_episode.png")
 plt.savefig(rewards_plot_path, dpi=300)
 plt.close()
 
@@ -271,6 +271,6 @@ plt.plot(range(len(epsilon_total)), epsilon_total, alpha=0.6, color="purple")
 plt.title("Epsilon per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Epsilon")
-epsilon_plot_path = os.path.join(OUTPUT_DIR, "rl16_epsilon_per_episode.png")
+epsilon_plot_path = os.path.join(OUTPUT_DIR, "rl17_epsilon_per_episode.png")
 plt.savefig(epsilon_plot_path, dpi=300)
 plt.close()
