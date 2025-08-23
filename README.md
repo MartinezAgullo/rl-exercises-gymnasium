@@ -257,3 +257,16 @@ The same [Cart Pole](https://gymnasium.farama.org/environments/classic_control/c
 
 ### rl18_cart_pole_experience_replay
 To alleviate the problems of correlated data and non-stationary distributions, we use an ([experience replay mechanism](https://apps.dtic.mil/sti/tr/pdf/ADA261434.pdf)) which randomly samples previous transitions, and thereby smooths the training distribution over many past behaviors.  Instead of training on experiences in the order they occur, the agent stores them in a data structure called a replay buffer.
+
+
+
+### rl19_cart_pole_target_NN.py
+The Deep Q-Network (DQN) uses a separate, identical NN  called the target network to calculate the target Q-values. This target network's weights are periodically synchronized with the main Learning NN weights but are held fixed during the training of the main network.
+
+The loss function ($L_i$) for the DQN traning is:
+
+$$
+L_i(\theta_i) = \mathbb{E}_{(s,a,r,s') \sim U(D)} \left[ \left( r + \gamma \max_{a'} Q(s',a';\theta_i^-) - Q(s,a;\theta_i) \right)^2 \right]
+$$
+
+Where $r + \gamma \max_{a'} Q(s',a';\theta_i^-)$ is the target Q value and $Q(s,a;\theta_i)$ is the current Q-value estimate for the action $a$ taken in state $s$. The $\theta$ are NN weights. Remember that the agent is the Learning NN.

@@ -1,5 +1,6 @@
 """
-CartPole using Gymnasium - Experience reply
+CartPole using Gymnasium
+Adding a target NN
 """
 
 import math
@@ -10,8 +11,9 @@ from typing import Any
 
 import gymnasium as gym
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
-from torch import LongTensor, Tensor, nn, optim
+from torch import Tensor, nn, optim
 
 # --- Environment Setup --
 env = gym.make("CartPole-v1")
@@ -19,7 +21,7 @@ NUM_EPISODES = 1000
 REPORT_INTERVAL = 10
 
 # --- Plotting directory --
-OUTPUT_DIR = "./docs/rl18"
+OUTPUT_DIR = "./docs/rl19"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 plt.style.use("ggplot")
 
@@ -31,6 +33,9 @@ GAMMA = 0.99
 
 REPLAY_MEM_SIZE = 50000
 BATCH_SIZE = 32
+
+UPDATE_TARGET_FREQUENCY = 100
+CLIP_ERROR = False
 
 EPSILON_INITIAL = 0.9
 EPSILON_FINAL = 0.02
@@ -121,7 +126,6 @@ class NeuralNetwork(nn.Module):
         self.linear2 = nn.Linear(HIDDEN_LAYER, number_of_outputs)
 
         self.activation = nn.Tanh()
-        # self.activation = nn.ReLU()
 
     def forward(self, x_in):
         """Forward pass of the network."""
@@ -136,12 +140,13 @@ class QNetAgent:
 
     def __init__(self):
         self.nn = NeuralNetwork().to(DEVICE)
+        self.target_nn = NeuralNetwork().to(DEVICE)
 
         self.loss_func = nn.MSELoss()
-        # self.loss_func = nn.SmoothL1Loss()
 
         self.optimizer = optim.Adam(params=self.nn.parameters(), lr=LEARNING_RATE)
-        # self.optimizer = optim.RMSprop(params=self.nn.parameters(), lr=LEARNING_RATE)
+
+        self.update_target_counter = 0  # pylint: disable=invalid-name
 
     def select_action(self, agnt_state, agnt_epsilon):
         """
@@ -153,7 +158,6 @@ class QNetAgent:
         if random_for_egreedy > agnt_epsilon:
             # Best possible movement
             with torch.no_grad():
-                # no_grad :: Won't perform backpropagation
                 agnt_state = Tensor(agnt_state).to(DEVICE)
                 action_from_nn = self.nn(agnt_state)
                 action = torch.max(action_from_nn, 0)[1]
@@ -176,16 +180,16 @@ class QNetAgent:
         agnt_state, action, next_state, agnt_reward, is_done = memory.sample(BATCH_SIZE)
 
         # Convert to tensors
-        agnt_state = Tensor(agnt_state).to(DEVICE)
-        next_state = Tensor(next_state).to(DEVICE)
-        agnt_reward = Tensor([agnt_reward]).to(DEVICE)
-        action = LongTensor(action).to(DEVICE)
-        is_done = Tensor(is_done).to(DEVICE)
+        agnt_state = torch.Tensor(np.array(agnt_state)).to(DEVICE)
+        next_state = torch.Tensor(np.array(next_state)).to(DEVICE)
+        agnt_reward = torch.Tensor(np.array(agnt_reward)).to(DEVICE)
+        action = torch.LongTensor(np.array(action)).to(DEVICE)
+        is_done = torch.Tensor(np.array(is_done)).to(DEVICE)
 
-        next_state_values = self.nn(next_state).detach()
-        max_next_state_values = torch.max(next_state_values, 1)[0]
-
-        target_q_value = agnt_reward + (1 - is_done) * GAMMA * max_next_state_values
+        # Using target NN for Q-values
+        new_state_values = self.target_nn(next_state).detach()
+        max_new_state_values = torch.max(new_state_values, 1)[0]
+        target_q_value = agnt_reward + (1 - is_done) * GAMMA * max_new_state_values
 
         predicted_q_value = (
             self.nn(agnt_state).gather(1, action.unsqueeze(1)).squeeze(1)
@@ -195,7 +199,17 @@ class QNetAgent:
 
         self.optimizer.zero_grad()
         loss.backward()
+
+        if CLIP_ERROR:
+            for param in self.nn.parameters():
+                param.grad.data.clamp_(-1, 1)
+
         self.optimizer.step()
+
+        if self.update_target_counter % UPDATE_TARGET_FREQUENCY == 0:
+            self.target_nn.load_state_dict(self.nn.state_dict())
+
+        self.update_target_counter += 1
 
         return loss.item()
 
@@ -261,7 +275,8 @@ for i_episode in range(NUM_EPISODES):
             steps_total.append(step)
             rewards_total.append(episode_reward_return)
             epsilon_total.append(epsilon)
-            losses.append(step_loss)
+            if step_loss is not None:
+                losses.append(step_loss)
 
             mean_reward_100 = sum(steps_total[-100:]) / 100
 
@@ -299,7 +314,7 @@ plt.plot(range(len(losses)), losses, alpha=0.6, color="blue")
 plt.title("Loss vs. Episode")
 plt.xlabel("Episode")
 plt.ylabel("Loss")
-loss_plot_path = os.path.join(OUTPUT_DIR, "rl18_loss_vs_episode.png")
+loss_plot_path = os.path.join(OUTPUT_DIR, "rl19_loss_vs_episode.png")
 plt.savefig(loss_plot_path, dpi=300)
 plt.close()
 
@@ -309,7 +324,7 @@ plt.plot(range(len(steps_total)), steps_total, alpha=0.6, color="red")
 plt.title("Steps per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Steps")
-steps_plot_path = os.path.join(OUTPUT_DIR, "rl18_steps_per_episode.png")
+steps_plot_path = os.path.join(OUTPUT_DIR, "rl19_steps_per_episode.png")
 plt.savefig(steps_plot_path, dpi=300)
 plt.close()
 
@@ -319,7 +334,7 @@ plt.plot(range(len(rewards_total)), rewards_total, alpha=0.6, color="green")
 plt.title("Rewards per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Reward")
-rewards_plot_path = os.path.join(OUTPUT_DIR, "rl18_rewards_per_episode.png")
+rewards_plot_path = os.path.join(OUTPUT_DIR, "rl19_rewards_per_episode.png")
 plt.savefig(rewards_plot_path, dpi=300)
 plt.close()
 
@@ -329,6 +344,6 @@ plt.plot(range(len(epsilon_total)), epsilon_total, alpha=0.6, color="purple")
 plt.title("Epsilon per Episode")
 plt.xlabel("Episode")
 plt.ylabel("Epsilon")
-epsilon_plot_path = os.path.join(OUTPUT_DIR, "rl18_epsilon_per_episode.png")
+epsilon_plot_path = os.path.join(OUTPUT_DIR, "rl19_epsilon_per_episode.png")
 plt.savefig(epsilon_plot_path, dpi=300)
 plt.close()
