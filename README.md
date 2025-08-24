@@ -269,7 +269,7 @@ $$ L_i(\theta_i) = \mathbb{E}_{(s,a,r,s') \sim U(D)} \left[ \left( r + \gamma \m
 
 Where $r + \gamma \max_{a'} Q(s',a';\theta_i^-)$ is the target Q value and $Q(s,a;\theta_i)$ is the current Q-value estimate for the action $a$ taken in state $s$. The $\theta$ are NN weights. Remember that the agent is the Learning NN.
 
-### rl20_cart_pole_ddqn.py
+### rl20_cart_pole_double_dqn.py
 
 [DRL with Double Q-learning](https://arxiv.org/abs/1509.06461) (DDQN) is an improvement on the standard DQN algorithm, designed to reduce overestimation bias in the predicted Q-values.
 <!-- It achieves this by decoupling the selection of the best action from the evaluation of its value. -->
@@ -279,5 +279,28 @@ $$Y_{\text{DQN}} = r + \gamma \cdot \max_{a'} Q(s', a'; \theta)$$
 and for the DDQN is:
 $$Y_{\text{DoubleDQN}} = r + \gamma \cdot Q(s', \arg\max_{a'} Q(s', a'; \theta); \theta^-)$$
 
-###
-(Dueling Network Architectures for DRL)[https://arxiv.org/abs/1511.06581]
+### rl21_cart_pole_dueling_dqn.py and rl22_cart_pole_dueling_dqn_tunned.py
+[Dueling Network Architectures for DRL](https://arxiv.org/abs/1511.06581) uses two sperate stimators: one for the state value function and one for the estate-dependent action advantage function. Here the Advantage Function $A^{π}(s, a)$ is defined as the diference and between $Q$ and $V$:
+
+$$ A^{π}(s, a) = Q^{π}(s, a) − V^{π}(s) $$
+
+The $V^{π}(s)$ tells us how good is to be in the state $s$. From here the Q-value can be derived:
+
+$$
+Q(s, a; \theta, \alpha, \beta) = V(s; \theta, \beta) + \left( A(s, a; \theta, \alpha) - \max_{a' \in |A|} A(s, a'; \theta, \alpha) \right)
+$$
+
+The dueling layer has two separate streams [one for the $Q^{π}(s, a)$ and one for $V^{π}(s)$] that are combinaed using the equation above to obtain the Q-value.
+
+<figure style="margin: 0;">
+    <img src="https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/docs/rl21/dueling_dqn.png" alt="Steps per episode before learning" style="width: 100%; max-width: 400px; display: block;">
+    <figcaption style="text-align: center; font-size: 0.9em; color: #555;">
+        Figure 9: **top**: Single stream DQN.
+        **bottom**: Dueling DQN. The dueling network has two streams to separately estimate (scalar) state-value and the advantages for each action; the green output module implements equation above to combine them. Both networks output Q-values for each action.
+    </figcaption>
+</figure>
+
+The more actions there are, te better dueling DQN performs.
+
+
+### DQN + CNN
