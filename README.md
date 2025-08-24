@@ -146,7 +146,7 @@ The ɛ greedy is varying through the episodes so that the exploration is favoure
         </figcaption>
     </figure>
 
-### rl09_fl_value_iteration
+### rl09_fl_value_iteration.py
 As an alternative, instead of Q-values, the V-values can be used.
 
 The V-value at a state *s* for a given policy $\pi$ is:
@@ -217,7 +217,7 @@ Average number of steps (last 100 episodes): 19.71
 ``` -->
 
 
-### rl11_nn_review
+### rl11_nn_review.py
 **Scaling Up Reinforcement Learning**
 Q-tables are inefficient for environments with a very large number of states, a situation known as the "curse of dimensionality." In these scenarios, it's highly probable the agent will encounter states it has never seen before, making a complete table lookup impossible.-
 
@@ -255,7 +255,7 @@ Adding additional hiden layer like in [Playing Atari with Deep Reinforcement Lea
 ### rl17_cart_pole_nn_2_layers.py
 The same [Cart Pole](https://gymnasium.farama.org/environments/classic_control/cart_pole/) as in [rl16_cart_pole_nn_2_layers.py](https://github.com/MartinezAgullo/rl-exercises-gymnasium/blob/main/rl16_cart_pole_nn_2_layers.py) but with better hyperparameters.
 
-### rl18_cart_pole_experience_replay
+### rl18_cart_pole_experience_replay.py
 To alleviate the problems of correlated data and non-stationary distributions, we use an ([experience replay mechanism](https://apps.dtic.mil/sti/tr/pdf/ADA261434.pdf)) which randomly samples previous transitions, and thereby smooths the training distribution over many past behaviors.  Instead of training on experiences in the order they occur, the agent stores them in a data structure called a replay buffer.
 
 
@@ -265,8 +265,16 @@ The Deep Q-Network (DQN) uses a separate, identical NN  called the target networ
 
 The loss function ($L_i$) for the DQN traning is:
 
-$$
-L_i(\theta_i) = \mathbb{E}_{(s,a,r,s') \sim U(D)} \left[ \left( r + \gamma \max_{a'} Q(s',a';\theta_i^-) - Q(s,a;\theta_i) \right)^2 \right]
-$$
+$$ L_i(\theta_i) = \mathbb{E}_{(s,a,r,s') \sim U(D)} \left[ \left( r + \gamma \max_{a'} Q(s',a';\theta_i^-) - Q(s,a;\theta_i) \right)^2 \right] $$
 
 Where $r + \gamma \max_{a'} Q(s',a';\theta_i^-)$ is the target Q value and $Q(s,a;\theta_i)$ is the current Q-value estimate for the action $a$ taken in state $s$. The $\theta$ are NN weights. Remember that the agent is the Learning NN.
+
+###
+
+[DRL with Double Q-learning](https://arxiv.org/abs/1509.06461) (DDQN) is an improvement on the standard DQN algorithm, designed to reduce overestimation bias in the predicted Q-values.
+<!-- It achieves this by decoupling the selection of the best action from the evaluation of its value. -->
+The standard DQN target value is:
+$$Y_{\text{DQN}} = r + \gamma \cdot \max_{a'} Q(s', a'; \theta)$$
+
+and for the DDQN is:
+$$Y_{\text{DoubleDQN}} = r + \gamma \cdot Q(s', \arg\max_{a'} Q(s', a'; \theta); \theta^-)$$
