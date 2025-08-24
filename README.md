@@ -269,7 +269,7 @@ $$ L_i(\theta_i) = \mathbb{E}_{(s,a,r,s') \sim U(D)} \left[ \left( r + \gamma \m
 
 Where $r + \gamma \max_{a'} Q(s',a';\theta_i^-)$ is the target Q value and $Q(s,a;\theta_i)$ is the current Q-value estimate for the action $a$ taken in state $s$. The $\theta$ are NN weights. Remember that the agent is the Learning NN.
 
-###
+### rl20_cart_pole_ddqn.py
 
 [DRL with Double Q-learning](https://arxiv.org/abs/1509.06461) (DDQN) is an improvement on the standard DQN algorithm, designed to reduce overestimation bias in the predicted Q-values.
 <!-- It achieves this by decoupling the selection of the best action from the evaluation of its value. -->
@@ -278,3 +278,6 @@ $$Y_{\text{DQN}} = r + \gamma \cdot \max_{a'} Q(s', a'; \theta)$$
 
 and for the DDQN is:
 $$Y_{\text{DoubleDQN}} = r + \gamma \cdot Q(s', \arg\max_{a'} Q(s', a'; \theta); \theta^-)$$
+
+###
+(Dueling Network Architectures for DRL)[https://arxiv.org/abs/1511.06581]
